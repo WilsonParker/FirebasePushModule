@@ -14,7 +14,7 @@ open class ImageUtil {
     /**
      * NotificationBuilder 를 생성
      * @Author : Hare
-     * Update : 19.3.26
+     * @Update : 19.3.26
      */
     @Throws(Exception::class)
     fun urlToBitmap(strUrl: String): Bitmap {

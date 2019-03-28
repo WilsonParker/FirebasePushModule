@@ -3,7 +3,7 @@ package com.dev.hare.firebasepushmodule.util
 import android.util.Log
 
 object Logger {
-    private val IS_DEBUG = true
+    var IS_DEBUG = true
 
     enum class LogType {
         INFO, DEBUG, VERB, WARN, ERROR

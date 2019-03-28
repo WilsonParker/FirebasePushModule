@@ -3,10 +3,14 @@ package com.dev.hare.firebasepushmodule.service.abstracts
 import android.app.Notification
 import android.app.Service
 import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Build
 import android.os.IBinder
-import com.dev.hare.firebasepushmodule.model.abstracts.AbstractNotificationModel
+import android.support.annotation.RequiresApi
+import com.dev.hare.firebasepushmodule.model.abstracts.AbstractDefaultNotificationModel
 import com.dev.hare.firebasepushmodule.model.interfaces.Notifiable
+import com.dev.hare.firebasepushmodule.util.ImageUtilUsingThread
+import com.dev.hare.firebasepushmodule.util.Logger
 import com.google.firebase.messaging.RemoteMessage
 import java.lang.NullPointerException
 
@@ -19,7 +23,8 @@ abstract class AbstractImageDownloadService : Service() {
 
     protected var url: String? = null
     protected var data: Map<String, String>? = null
-    protected var model: AbstractNotificationModel? = null
+    protected var model: AbstractDefaultNotificationModel? = null
+    protected var onImageLoadCompleteListener: ImageUtilUsingThread.OnImageLoadCompleteListener = createOnImageLoadCompleteListener()
 
     override fun onBind(intent: Intent): IBinder? {
         return null
@@ -34,7 +39,7 @@ abstract class AbstractImageDownloadService : Service() {
      * RemoteMessage 를 이용해서 url, data property 에 값을 대입 한 후 run() 을 실행합니다
      *
      * @Author : Hare
-     * Update : 19.3.27
+     * @Update : 19.3.27
      */
     private fun runAfterBind(intent: Intent?) {
         intent?.let {
@@ -50,26 +55,49 @@ abstract class AbstractImageDownloadService : Service() {
      * 새로운 Notification 을 생성하여 실행해야 합니다
      *
      * @Author : Hare
-     * Update : 19.3.27
+     * @Update : 19.3.27
      */
     @Throws(NullPointerException::class)
-    internal fun notifyOwn(model: Notifiable?) {
+    protected fun notifyOwn(model: Notifiable?) {
         if(model == null)
             throw NullPointerException("Notifiable is null")
         startForeground(CHANNEL_ID,
             if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O)
-                model.createOwnNotification()
+                model.createDefaultOwnNotification()
             else
                 Notification()
         )
     }
 
-    internal fun notifyStop() {
+    protected fun notifyStop() {
         stopForeground(true)
         stopSelf(CHANNEL_ID)
     }
 
-    internal abstract fun createNotificationModel(data: Map<String, String>?): AbstractNotificationModel
-    internal abstract fun run()
+    /**
+     * Foreground 로 Notification 을 실행하고 푸시를 보냅니다
+     *
+     * @Author : Hare
+     * @Update : 19.3.27
+     */
+    protected fun run() {
+        try {
+            notifyOwn(model)
+            model!!.let { m ->
+                val imageUtilUsingThread = ImageUtilUsingThread()
+                imageUtilUsingThread.urlToBitmapUsingThread(
+                    url!!,
+                    null,
+                    onImageLoadCompleteListener
+                )
+            }
+        } catch (e: Exception) {
+            Logger.log(Logger.LogType.ERROR, e)
+        }
+    }
+
+    protected abstract fun createNotificationModel(data: Map<String, String>?): AbstractDefaultNotificationModel
+
+    protected abstract fun createOnImageLoadCompleteListener(): ImageUtilUsingThread.OnImageLoadCompleteListener
 
 }

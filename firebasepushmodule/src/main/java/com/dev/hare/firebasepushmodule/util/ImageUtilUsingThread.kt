@@ -5,7 +5,7 @@ import android.os.AsyncTask
 import com.dev.hare.firebasepushmodule.exception.ExceptionUtil
 
 class ImageUtilUsingThread : ImageUtil() {
-    private var onImageLoadCompleteListener: OnImageLoadCompleteListener? = null
+    protected var onImageLoadCompleteListener: OnImageLoadCompleteListener? = null
     private var def: Bitmap? = null
     private var onErrorUtil: ExceptionUtil? = null
 
@@ -16,10 +16,10 @@ class ImageUtilUsingThread : ImageUtil() {
     }
 
     interface OnImageLoadCompleteListener {
-        fun onComplete(bitmap: Bitmap)
+        fun onComplete(bitmap: Bitmap?)
     }
 
-    private inner class ImageLoadTask : AsyncTask<String, Void, Bitmap>() {
+    private inner class ImageLoadTask : AsyncTask<String, Void, Bitmap?>() {
         override fun doInBackground(vararg strings: String): Bitmap? {
             try {
                 onErrorUtil = ExceptionUtil(
@@ -38,7 +38,7 @@ class ImageUtilUsingThread : ImageUtil() {
 
         }
 
-        override fun onPostExecute(bitmap: Bitmap) {
+        override fun onPostExecute(bitmap: Bitmap?) {
             onImageLoadCompleteListener!!.onComplete(bitmap)
         }
     }

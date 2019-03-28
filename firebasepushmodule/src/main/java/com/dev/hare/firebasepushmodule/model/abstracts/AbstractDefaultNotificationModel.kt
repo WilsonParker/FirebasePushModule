@@ -11,11 +11,11 @@ import com.dev.hare.firebasepushmodule.MainActivity
 import com.dev.hare.firebasepushmodule.R
 import com.dev.hare.firebasepushmodule.model.interfaces.Notifiable
 
-abstract class AbstractNotificationModel(
-    private val context: Context,
+abstract class AbstractDefaultNotificationModel(
+    protected val context: Context,
     data: Map<String, String>,
-    private val channelID: String = "channelID",
-    private val channelName: String = "channelName"
+    protected val channelID: String = "channelID",
+    protected val channelName: String = "channelName"
 ) : Notifiable {
 
     companion object {
@@ -40,19 +40,6 @@ abstract class AbstractNotificationModel(
         this.title = data[KEY_TITLE]
         this.content = data[KEY_CONTENT]
         this.url = data[KEY_URL]
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            this.notificationBuilder = createNotificationBuilder();
-            if (this.notificationBuilder == null) {
-                this.notificationBuilder = createDefaultNotificationBuilder()
-            }
-            createNotificationChannel(notificationManager)
-        } else {
-            this.notificationCompatBuilder = createNotificationCompatBuilder()
-            if (this.notificationCompatBuilder == null) {
-                this.notificationCompatBuilder = createDefaultNotificationCompatBuilder()
-            }
-        }
     }
 
     /**
@@ -65,7 +52,7 @@ abstract class AbstractNotificationModel(
      * @updated 28/03/2019
      * */
     @RequiresApi(Build.VERSION_CODES.O)
-    override fun createOwnNotification(): Notification {
+    override fun createDefaultOwnNotification(): Notification {
         notificationBuilder = Notification.Builder(context, channelID)
         return notificationBuilder?.apply {
             setOngoing(true)
@@ -86,7 +73,7 @@ abstract class AbstractNotificationModel(
      * @updated 28/03/2019
      * */
     @RequiresApi(Build.VERSION_CODES.O)
-    override fun createNotificationChannel(notificationManager: NotificationManager): NotificationChannel {
+    override fun createDefaultNotificationChannel(notificationManager: NotificationManager): NotificationChannel {
         var notificationChannel: NotificationChannel =
             NotificationChannel(channelID, channelName, NotificationManager.IMPORTANCE_HIGH).apply {
                 enableLights(true)
@@ -140,6 +127,15 @@ abstract class AbstractNotificationModel(
         }
     }
 
+    /**
+     * apply default NotificationCompat.BigPictureStyle to NotificationCompat.Builder
+     *
+     * @param
+     * @return
+     * @author Hare
+     * @added 28/03/2019
+     * @updated 28/03/2019
+     * */
     fun applyDefaultBigPictureStyle(builder: NotificationCompat.Builder, image: Bitmap): NotificationCompat.Builder {
         return builder?.apply {
             setStyle(
@@ -151,6 +147,15 @@ abstract class AbstractNotificationModel(
         }
     }
 
+    /**
+     * apply default Notification.BigPictureStyle to Notification.Builder
+     *
+     * @param
+     * @return
+     * @author Hare
+     * @added 28/03/2019
+     * @updated 28/03/2019
+     * */
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN)
     fun applyDefaultBigPictureStyle(builder: Notification.Builder, image: Bitmap): Notification.Builder {
         return builder?.apply {
@@ -161,6 +166,15 @@ abstract class AbstractNotificationModel(
         }
     }
 
+    /**
+     * apply default NotificationCompat.BigTextStyle to NotificationCompat.Builder by default
+     *
+     * @param
+     * @return
+     * @author Hare
+     * @added 28/03/2019
+     * @updated 28/03/2019
+     * */
     fun applyDefaultBigTextStyle(builder: NotificationCompat.Builder): NotificationCompat.Builder {
         return builder?.apply {
             setStyle(
@@ -172,6 +186,15 @@ abstract class AbstractNotificationModel(
         }
     }
 
+    /**
+     * apply default Notification.BigTextStyle to Notification.Builder
+     *
+     * @param
+     * @return
+     * @author Hare
+     * @added 28/03/2019
+     * @updated 28/03/2019
+     * */
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN)
     fun applyDefaultBigTextStyle(builder: Notification.Builder): Notification.Builder {
         return builder?.apply {
@@ -184,12 +207,34 @@ abstract class AbstractNotificationModel(
 
     override fun runNotification() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            this.notificationBuilder = createNotificationBuilder();
+            if (this.notificationBuilder == null) {
+                this.notificationBuilder = createDefaultNotificationBuilder()
+            }
+            createDefaultNotificationChannel(notificationManager)
+        } else {
+            this.notificationCompatBuilder = createNotificationCompatBuilder()
+            if (this.notificationCompatBuilder == null) {
+                this.notificationCompatBuilder = createDefaultNotificationCompatBuilder()
+            }
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             notificationManager.notify(0, notificationBuilder!!.build())
         } else {
             notificationManager.notify(0, notificationCompatBuilder!!.build())
         }
     }
 
+    /**
+     * create PendingIntent by default
+     *
+     * @param
+     * @return
+     * @author Hare
+     * @added 28/03/2019
+     * @updated 28/03/2019
+     * */
     private fun createDefaultPendingIntent(): PendingIntent {
         val t = Intent(context, MainActivity::class.java)
         return PendingIntent.getActivity(

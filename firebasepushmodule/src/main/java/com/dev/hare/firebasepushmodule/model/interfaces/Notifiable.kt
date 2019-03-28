@@ -9,20 +9,20 @@ import android.support.annotation.RequiresApi
 import android.support.v4.app.NotificationCompat
 
 interface Notifiable {
-    fun createOwnNotification(): Notification
+    fun createDefaultOwnNotification(): Notification
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    fun createNotificationChannel(notificationManager: NotificationManager): NotificationChannel
+    fun createDefaultNotificationChannel(notificationManager: NotificationManager): NotificationChannel
 
     fun createDefaultNotificationCompatBuilder(): NotificationCompat.Builder
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun createDefaultNotificationBuilder(): Notification.Builder
 
-    fun createDefaultNotificationCompatBuilderWithImage(image: Bitmap): NotificationCompat.Builder
-
     @RequiresApi(Build.VERSION_CODES.O)
-    fun createDefaultNotificationBuilderWithImage(image: Bitmap): Notification.Builder
+    fun createNotificationBuilder(): Notification.Builder
+
+    fun createNotificationCompatBuilder(): NotificationCompat.Builder
 
     fun runNotification()
 }
