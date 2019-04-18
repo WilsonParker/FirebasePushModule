@@ -9,7 +9,11 @@ class ImageUtilUsingThread : ImageUtil() {
     private var def: Bitmap? = null
     private var onErrorUtil: ExceptionUtil? = null
 
-    fun urlToBitmapUsingThread(strUrl: String, def: Bitmap?, onImageLoadCompleteListener: OnImageLoadCompleteListener) {
+    fun urlToBitmapUsingThread(
+        strUrl: String?,
+        def: Bitmap?,
+        onImageLoadCompleteListener: OnImageLoadCompleteListener
+    ) {
         this.def = def
         this.onImageLoadCompleteListener = onImageLoadCompleteListener
         ImageLoadTask().execute(strUrl)
@@ -20,18 +24,24 @@ class ImageUtilUsingThread : ImageUtil() {
     }
 
     private inner class ImageLoadTask : AsyncTask<String, Void, Bitmap?>() {
-        override fun doInBackground(vararg strings: String): Bitmap? {
+        override fun doInBackground(vararg strings: String?): Bitmap? {
             try {
-                onErrorUtil = ExceptionUtil(
-                    6,
-                    onExecute = object : ExceptionUtil.OnExecute {
-                        override fun <T> execute(): T {
-                            var bitmap = urlToBitmap(strings[0])
-                            return bitmap as T
-                        }
+                return strings[0]?.let {
+                    if (it.isNotEmpty()) {
+                        onErrorUtil = ExceptionUtil(
+                            6,
+                            onExecute = object : ExceptionUtil.OnExecute {
+                                override fun <T> execute(): T {
+                                    var bitmap = urlToBitmap(strings[0]!!)
+                                    return bitmap as T
+                                }
+                            }
+                        )
+                        return onErrorUtil!!.handleException(def)
+                    } else {
+                        return null
                     }
-                )
-                return onErrorUtil!!.handleException(def)
+                }
             } catch (e: Exception) {
                 return null
             }

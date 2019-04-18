@@ -3,12 +3,10 @@ package com.dev.hare.firebasepushmodule.service.abstracts
 import android.app.Notification
 import android.app.Service
 import android.content.Intent
-import android.graphics.Bitmap
 import android.os.Build
 import android.os.IBinder
-import android.support.annotation.RequiresApi
 import com.dev.hare.firebasepushmodule.model.abstracts.AbstractDefaultNotificationModel
-import com.dev.hare.firebasepushmodule.model.interfaces.Notifiable
+import com.dev.hare.firebasepushmodule.model.interfaces.NotificationBuildable
 import com.dev.hare.firebasepushmodule.util.ImageUtilUsingThread
 import com.dev.hare.firebasepushmodule.util.Logger
 import com.google.firebase.messaging.RemoteMessage
@@ -16,7 +14,7 @@ import java.lang.NullPointerException
 
 abstract class AbstractImageDownloadService : Service() {
     companion object {
-        const val KEY_URL = "url"
+        const val KEY_URL = "imageUrl"
         const val KEY_REMOTE_MESSAGE = "msg"
         private const val CHANNEL_ID= 1
     }
@@ -36,7 +34,7 @@ abstract class AbstractImageDownloadService : Service() {
     }
 
     /**
-     * RemoteMessage 를 이용해서 url, data property 에 값을 대입 한 후 run() 을 실행합니다
+     * RemoteMessage 를 이용해서 imageUrl, data property 에 값을 대입 한 후 run() 을 실행합니다
      *
      * @Author : Hare
      * @Update : 19.3.27
@@ -58,12 +56,12 @@ abstract class AbstractImageDownloadService : Service() {
      * @Update : 19.3.27
      */
     @Throws(NullPointerException::class)
-    protected fun notifyOwn(model: Notifiable?) {
+    protected fun notifyOwn(model: AbstractDefaultNotificationModel?) {
         if(model == null)
-            throw NullPointerException("Notifiable is null")
+            throw NullPointerException("NotificationBuildable is null")
         startForeground(CHANNEL_ID,
             if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O)
-                model.createDefaultOwnNotification()
+                model.ownNotification
             else
                 Notification()
         )
@@ -83,10 +81,10 @@ abstract class AbstractImageDownloadService : Service() {
     protected fun run() {
         try {
             notifyOwn(model)
-            model!!.let { m ->
+            model!!.let {
                 val imageUtilUsingThread = ImageUtilUsingThread()
                 imageUtilUsingThread.urlToBitmapUsingThread(
-                    url!!,
+                    url,
                     null,
                     onImageLoadCompleteListener
                 )

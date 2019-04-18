@@ -16,7 +16,7 @@ class ImageDownloadForegroundService : AbstractImageDownloadService() {
             @RequiresApi(Build.VERSION_CODES.O)
             override fun onComplete(bitmap: Bitmap?) {
                 model!!.img = bitmap;
-                model!!.createNotificationBuilder()
+//                model!!.ownNotification
                 model!!.runNotification()
                 notifyStop()
             }

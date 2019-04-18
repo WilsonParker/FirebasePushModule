@@ -1,6 +1,7 @@
 package com.dev.hare.firebasepushmodule.util
 
 import android.util.Log
+import kotlin.math.log
 
 object Logger {
     var IS_DEBUG = true
@@ -18,7 +19,16 @@ object Logger {
         e.printStackTrace()
     }
 
-    private fun log(logType: LogType, message: String) {
+    fun log(logType: LogType, t: Throwable) {
+        log(logType, "", t)
+    }
+
+    fun log(logType: LogType, message: String, t: Throwable) {
+        log(logType, message + t.message)
+        t.printStackTrace()
+    }
+
+    fun log(logType: LogType, message: String) {
         if (IS_DEBUG) {
             val log = buildLogMsg(message)
             when (logType) {

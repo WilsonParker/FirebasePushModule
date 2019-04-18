@@ -35,7 +35,7 @@ class ExceptionUtil (private val targetCount: Int, private val onExecute: OnExec
 
     interface OnExecute {
         @Throws(Exception::class)
-        fun <T> execute(): T
+        fun <T> execute(): T?
     }
 
 }
