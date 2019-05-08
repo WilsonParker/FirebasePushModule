@@ -1,6 +1,7 @@
 package com.dev.hare.firebasepushmodule.http.interfaces
 
 import com.dev.hare.firebasepushmodule.http.model.HttpResultModel
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query

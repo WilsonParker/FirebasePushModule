@@ -1,7 +1,6 @@
 package com.dev.hare.firebasepushmodule.util
 
 import android.util.Log
-import kotlin.math.log
 
 object Logger {
     var IS_DEBUG = true

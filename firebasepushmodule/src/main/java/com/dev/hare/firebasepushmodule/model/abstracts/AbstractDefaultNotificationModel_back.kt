@@ -9,22 +9,31 @@ import android.support.annotation.RequiresApi
 import android.support.v4.app.NotificationCompat
 import com.dev.hare.firebasepushmodule.MainActivity
 import com.dev.hare.firebasepushmodule.R
-import com.dev.hare.firebasepushmodule.model.NotificationBuilderModel
-import com.dev.hare.firebasepushmodule.model.NotificationDataModel
 import com.dev.hare.firebasepushmodule.model.interfaces.NotificationBuildable
 import kotlin.reflect.KClass
 
-abstract class AbstractDefaultNotificationModel(
+abstract class AbstractDefaultNotificationModel_back(
     protected val context: Context,
-    protected val dataModel: NotificationDataModel,
-    protected val builderModel: NotificationBuilderModel,
-    protected val styleModel: AbstractNotificationBigStyleModel,
+    data: Map<String, String>,
     protected val channelID: String = "channelID",
     protected val channelName: String = "channelName"
 ) : NotificationBuildable {
 
+    companion object {
+        const val KEY_TITLE = "title"
+        const val KEY_CONTENT = "content"
+        const val KEY_IMAGE_URL = "imageUrl"
+        const val KEY_LINK = "link"
+        const val KEY_PUSH_TYPE = "push_type"
+    }
+
     protected val _REQUEST_CODE = 0
 
+    protected var title: String? = null
+    protected var content: String? = null
+    protected var link: String? = null
+    protected var imageUrl: String? = null
+    protected var pushType: String? = null
     protected var notificationManager: NotificationManager =
         context.getSystemService(Activity.NOTIFICATION_SERVICE) as NotificationManager
 
