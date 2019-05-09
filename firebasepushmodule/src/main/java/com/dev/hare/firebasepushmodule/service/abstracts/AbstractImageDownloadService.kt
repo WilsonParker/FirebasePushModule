@@ -1,6 +1,8 @@
 package com.dev.hare.firebasepushmodule.service.abstracts
 
+import android.app.Activity
 import android.app.Notification
+import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
 import android.os.Build
@@ -16,12 +18,14 @@ abstract class AbstractImageDownloadService : Service() {
     companion object {
         const val KEY_URL = "imageUrl"
         const val KEY_REMOTE_MESSAGE = "msg"
+        const val _REQUEST_CODE = 0
         private const val CHANNEL_ID= 1
     }
 
+
+    var model: AbstractDefaultNotificationModel? = null
     protected var url: String? = null
     protected var data: Map<String, String>? = null
-    protected var model: AbstractDefaultNotificationModel? = null
     protected var onImageLoadCompleteListener: ImageUtilUsingThread.OnImageLoadCompleteListener = createOnImageLoadCompleteListener()
 
     override fun onBind(intent: Intent): IBinder? {
@@ -98,4 +102,22 @@ abstract class AbstractImageDownloadService : Service() {
 
     protected abstract fun createOnImageLoadCompleteListener(): ImageUtilUsingThread.OnImageLoadCompleteListener
 
+    /**
+     * create PendingIntent by default
+     *
+     * @param
+     * @return
+     * @author Hare
+     * @added 28/03/2019
+     * @updated 09/05/2019
+     * */
+    fun createDefaultPendingIntent(activity: Class<out Activity>): PendingIntent {
+        var intent = Intent(this, activity)
+        return PendingIntent.getActivity(
+            this,
+            _REQUEST_CODE,
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP),
+            PendingIntent.FLAG_UPDATE_CURRENT
+        )
+    }
 }

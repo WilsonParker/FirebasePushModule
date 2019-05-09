@@ -19,7 +19,7 @@ import android.widget.RemoteViews
 import java.lang.annotation.Retention
 import java.lang.annotation.RetentionPolicy
 
-class NotificationBuilderModel(val context: Context, channelId: String) {
+class NotificationBuilderModel(context: Context, channelId: String) {
     var builder: Notification.Builder? = null
     var compatBuilder: NotificationCompat.Builder? = null
 

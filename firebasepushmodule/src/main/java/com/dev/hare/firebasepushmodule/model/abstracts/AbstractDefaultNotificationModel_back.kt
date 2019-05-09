@@ -7,17 +7,16 @@ import android.graphics.Bitmap
 import android.os.Build
 import android.support.annotation.RequiresApi
 import android.support.v4.app.NotificationCompat
-import com.dev.hare.firebasepushmodule.MainActivity
 import com.dev.hare.firebasepushmodule.R
-import com.dev.hare.firebasepushmodule.model.interfaces.NotificationBuildable
-import kotlin.reflect.KClass
+import com.dev.hare.firebasepushmodule.model.interfaces.NotificationBuildable_back
+import com.dev.hare.firebasepushmodule.sample.MainActivity
 
 abstract class AbstractDefaultNotificationModel_back(
     protected val context: Context,
     data: Map<String, String>,
     protected val channelID: String = "channelID",
     protected val channelName: String = "channelName"
-) : NotificationBuildable {
+) : NotificationBuildable_back {
 
     companion object {
         const val KEY_TITLE = "title"

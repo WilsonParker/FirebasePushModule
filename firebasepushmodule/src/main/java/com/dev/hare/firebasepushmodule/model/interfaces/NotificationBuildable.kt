@@ -17,8 +17,4 @@ interface NotificationBuildable {
     @RequiresApi(api = Build.VERSION_CODES.O)
     fun createNotificationChannel(notificationManager: NotificationManager): NotificationChannel
 
-    fun createDefaultPendingIntent(activity: Class<out Activity>): PendingIntent
-
-    fun createPendingIntent(activity: Class<out Activity>): PendingIntent
-
 }

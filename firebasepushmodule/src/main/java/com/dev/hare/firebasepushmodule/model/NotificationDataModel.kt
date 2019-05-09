@@ -1,27 +1,38 @@
 package com.dev.hare.firebasepushmodule.model
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.support.v4.app.NotificationCompat
+import com.dev.hare.firebasepushmodule.model.abstracts.AbstractDefaultNotificationModel
 import com.dev.hare.firebasepushmodule.model.abstracts.AbstractNotificationBigStyleModel
 
 class NotificationDataModel(
-    protected val context: Context,
-    protected val channelID: String = "channelID",
-    protected val channelName: String = "channelName"
+    val context: Context,
+    val channelID: String = "channelID",
+    val channelName: String = "channelName",
+    val data: Map<String, String>? = null
 ) {
-    protected var title: String? = null
-    protected var content: String? = null
-    protected var link: String? = null
-    protected var imageUrl: String? = null
-    protected var pushType: String? = null
 
-    protected var bigStyle: AbstractNotificationBigStyleModel? = null
+    var title: String? = null
+    var content: String? = null
+    var link: String? = null
+    var imageUrl: String? = null
+    var pushType: String? = null
+    var image: Bitmap? = null
+    var largeIcon: Bitmap? = null
 
-
-    companion object {
-        const val KEY_TITLE = "title"
-        const val KEY_CONTENT = "content"
-        const val KEY_IMAGE_URL = "imageUrl"
-        const val KEY_LINK = "link"
-        const val KEY_PUSH_TYPE = "push_type"
+    init {
+        data?.let {
+            bindData(it)
+        }
     }
+
+    fun bindData(data: Map<String, String>) {
+        this.title = data[AbstractDefaultNotificationModel.Key.TITLE.toString()]
+        this.content = data[AbstractDefaultNotificationModel.Key.CONTENT.toString()]
+        this.imageUrl = data[AbstractDefaultNotificationModel.Key.IMAGE_URL.toString()]
+        this.link = data[AbstractDefaultNotificationModel.Key.LINK.toString()]
+        this.pushType = data[AbstractDefaultNotificationModel.Key.PUSH_TYPE.toString()]
+    }
+
 }
