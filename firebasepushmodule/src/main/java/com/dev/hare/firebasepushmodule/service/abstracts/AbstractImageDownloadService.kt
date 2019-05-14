@@ -5,10 +5,14 @@ import android.app.Notification
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Build
 import android.os.IBinder
+import com.dev.hare.firebasepushmodule.R
+import com.dev.hare.firebasepushmodule.basic.FirebaseBasicModel
+import com.dev.hare.firebasepushmodule.model.NotificationBuilderModel
+import com.dev.hare.firebasepushmodule.model.NotificationDataModel
 import com.dev.hare.firebasepushmodule.model.abstracts.AbstractDefaultNotificationModel
-import com.dev.hare.firebasepushmodule.model.interfaces.NotificationBuildable
 import com.dev.hare.firebasepushmodule.util.ImageUtilUsingThread
 import com.dev.hare.firebasepushmodule.util.Logger
 import com.google.firebase.messaging.RemoteMessage
@@ -16,12 +20,15 @@ import java.lang.NullPointerException
 
 abstract class AbstractImageDownloadService : Service() {
     companion object {
-        const val KEY_URL = "imageUrl"
+        const val KEY_URL = AbstractDefaultNotificationModel.Key.IMAGE_URL
         const val KEY_REMOTE_MESSAGE = "msg"
         const val _REQUEST_CODE = 0
         private const val CHANNEL_ID= 1
     }
 
+    abstract protected val _channelID: String
+    abstract protected val _channelName: String
+    abstract protected val activityCalss: Class<Activity>
 
     var model: AbstractDefaultNotificationModel? = null
     protected var url: String? = null
@@ -98,10 +105,6 @@ abstract class AbstractImageDownloadService : Service() {
         }
     }
 
-    protected abstract fun createNotificationModel(data: Map<String, String>?): AbstractDefaultNotificationModel
-
-    protected abstract fun createOnImageLoadCompleteListener(): ImageUtilUsingThread.OnImageLoadCompleteListener
-
     /**
      * create PendingIntent by default
      *
@@ -120,4 +123,32 @@ abstract class AbstractImageDownloadService : Service() {
             PendingIntent.FLAG_UPDATE_CURRENT
         )
     }
+
+    protected fun createNotificationModel(data: Map<String, String>?): AbstractDefaultNotificationModel {
+        var pendingIntent = createDefaultPendingIntent(activityCalss)
+        var dataModel = NotificationDataModel(this, _channelID, _channelName, data)
+        var builderModel = NotificationBuilderModel(this, _channelID).apply {
+            // dataModel.title?.let { setContentTitle(it) }
+            // dataModel.content?.let { setContentText(it) }
+            // setSubText()
+            setSmallIcon(R.mipmap.ic_launcher)
+            setAutoCancel(true)
+            setPriority(Notification.PRIORITY_MAX)
+            setContentIntent(pendingIntent)
+        }
+        return FirebaseBasicModel(this, dataModel, builderModel, pendingIntent)
+    }
+
+    protected  fun createOnImageLoadCompleteListener(): ImageUtilUsingThread.OnImageLoadCompleteListener {
+        return object : ImageUtilUsingThread.OnImageLoadCompleteListener {
+            override fun onComplete(bitmap: Bitmap?) {
+                model?.run {
+                    pictureStyleModel.bigPicture = bitmap
+                    runNotification()
+                    notifyStop()
+                }
+            }
+        }
+    }
+
 }

@@ -1,6 +1,6 @@
 package com.dev.hare.firebasepushmodule.http.abstracts
 
-import com.dev.hare.firebasepushmodule.http.interfaces.PushCallable
+import com.dev.hare.firebasepushmodule.http.interfaces.TokenManageable
 import com.dev.hare.firebasepushmodule.http.model.HttpConstantModel
 import com.dev.hare.firebasepushmodule.http.model.HttpResultModel
 import com.dev.hare.firebasepushmodule.util.Logger
@@ -12,8 +12,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 abstract class AbstractCallService {
     abstract val baseUrl: String
-    protected val retrofitCallableClass = PushCallable::class.java
-    val pushService: PushCallable
+    protected val retrofitCallableClass = TokenManageable::class.java
+    private val pushService: TokenManageable
 
     private val retrofit: Retrofit
 

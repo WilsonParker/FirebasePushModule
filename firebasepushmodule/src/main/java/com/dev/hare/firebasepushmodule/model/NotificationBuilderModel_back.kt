@@ -7,12 +7,12 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.support.annotation.ColorInt
-import android.support.annotation.RequiresApi
-import android.support.annotation.RestrictTo
-import android.support.v4.app.NotificationCompat
 import android.widget.RemoteViews
-import java.util.ArrayList
+import androidx.annotation.ColorInt
+import androidx.annotation.RequiresApi
+import androidx.annotation.RestrictTo
+import androidx.core.app.NotificationCompat
+import java.util.*
 
 class NotificationBuilderModel_back(context: Context, channelId: String) {
     private val MAX_CHARSEQUENCE_LENGTH = 5120

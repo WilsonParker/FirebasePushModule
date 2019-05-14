@@ -7,7 +7,7 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 
-interface PushCallable {
+interface TokenManageable {
 
     @GET("/push/insertToken")
     fun insertToken(@Query("token") token: String, @Query("os_type") os_type: String, @Query("device_id") device_id: String): Call<HttpResultModel>
